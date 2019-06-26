@@ -4,6 +4,7 @@ import 'home_page.dart';
 import 'cart_page.dart';
 import 'category_page.dart';
 import 'member_page.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class IndexPage extends StatefulWidget {
   @override
@@ -25,33 +26,32 @@ class _IndexPageState extends State<IndexPage> {
   ];
 
   //存储页面
-  final List tabBodies = [HomePage(), CategoryPage(), CartPage(), MemberPage()];
+  final List<Widget> tabBodies = [HomePage(), CategoryPage(), CartPage(), MemberPage()];
 
   //对应的索引
   var currentIndex = 0;
 
-  //对应的页面
-  var currentPage;
-
   @override
   void initState() {
     super.initState();
-    currentPage = tabBodies[currentIndex];
   }
 
   @override
   Widget build(BuildContext context) {
+    ScreenUtil(width: 750, height: 1334)..init(context);
     return Scaffold(
-      body: currentPage,
+      body: IndexedStack(
+        index: currentIndex,
+        children: tabBodies,
+      ),
       backgroundColor: Color.fromRGBO(244, 245, 245, 1.0),
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         items: bottomTabs,
         currentIndex: currentIndex,
-        onTap: (index){
+        onTap: (index) {
           setState(() {
             currentIndex = index;
-            currentPage = tabBodies[currentIndex];
           });
         },
       ),
