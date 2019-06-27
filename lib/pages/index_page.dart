@@ -32,11 +32,6 @@ class _IndexPageState extends State<IndexPage> {
   var currentIndex = 0;
 
   @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
     ScreenUtil(width: 750, height: 1334)..init(context);
     return Scaffold(

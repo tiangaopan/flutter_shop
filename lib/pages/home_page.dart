@@ -3,6 +3,7 @@ import '../service/service_method.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 import 'dart:convert';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_easyrefresh/easy_refresh.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -12,10 +13,14 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage>
     with AutomaticKeepAliveClientMixin {
   String homePageContent = '正在获取数据';
+  int page = 1;
+  List<Map> hotGoodsList = [];
+  GlobalKey<RefreshFooterState> _footerKey = GlobalKey<RefreshFooterState>();
 
   @override
   void initState() {
     super.initState();
+//    _getHotGoods();
   }
 
   @override
@@ -28,7 +33,7 @@ class _HomePageState extends State<HomePage>
         title: Text('百姓生活+'),
       ),
       body: FutureBuilder(
-          future: request("homePageContent", formData),
+          future: request("homePageContent", formData: formData),
           builder: (BuildContext context, AsyncSnapshot snapshot) {
             if (snapshot.hasData) {
               var data = json.decode(snapshot.data.toString());
@@ -52,16 +57,26 @@ class _HomePageState extends State<HomePage>
               String floor1Title =
                   data['data']['floor1Pic']['PICTURE_ADDRESS'].toString();
               String floor2Title =
-              data['data']['floor2Pic']['PICTURE_ADDRESS'].toString();
+                  data['data']['floor2Pic']['PICTURE_ADDRESS'].toString();
               String floor3Title =
-              data['data']['floor3Pic']['PICTURE_ADDRESS'].toString();
+                  data['data']['floor3Pic']['PICTURE_ADDRESS'].toString();
 
               List<Map> floor1 = (data['data']['floor1'] as List).cast();
               List<Map> floor2 = (data['data']['floor2'] as List).cast();
               List<Map> floor3 = (data['data']['floor3'] as List).cast();
 
-              return SingleChildScrollView(
-                child: Column(
+              return EasyRefresh(
+                refreshFooter: ClassicsFooter(
+                  key: _footerKey,
+                  bgColor: Colors.white,
+                  textColor: Colors.pink,
+                  moreInfoColor: Colors.pink,
+                  showMore: true,
+                  noMoreText: "",
+                  moreInfo: '加载中...',
+                  loadReadyText: '上拉加载...',
+                ),
+                child: ListView(
                   children: <Widget>[
                     SwiperDiy(swiperDataList: swiper),
                     TopNavigator(navigatorList: navgatorList),
@@ -74,14 +89,34 @@ class _HomePageState extends State<HomePage>
                     ),
                     Recommend(recommendList: recommendList),
                     FloorTitle(picture_address: floor1Title),
-                    FloorContent(floorGoodsList: floor1,),
+                    FloorContent(
+                      floorGoodsList: floor1,
+                    ),
                     FloorTitle(picture_address: floor2Title),
-                    FloorContent(floorGoodsList: floor2,),
+                    FloorContent(
+                      floorGoodsList: floor2,
+                    ),
                     FloorTitle(picture_address: floor3Title),
-                    FloorContent(floorGoodsList: floor3,),
-                    HotGoods(),
+                    FloorContent(
+                      floorGoodsList: floor3,
+                    ),
+                    _hotGoods()
                   ],
                 ),
+                loadMore: () async {
+                  print('开始加载更多.....');
+                  var formPage = {'page': page};
+                  await request('homePageBelowContent', formData: formPage)
+                      .then((value) {
+                    var data = json.decode(value.toString());
+                    //新的列表
+                    List<Map> newGoodsList = (data['data'] as List).cast();
+                    setState(() {
+                      hotGoodsList.addAll(newGoodsList);
+                      page++;
+                    });
+                  });
+                },
               );
             } else {
               return Center(
@@ -89,6 +124,72 @@ class _HomePageState extends State<HomePage>
               );
             }
           }),
+    );
+  }
+
+  Widget hotTitle = Container(
+    margin: EdgeInsets.only(top: 10),
+    alignment: Alignment.center,
+    color: Colors.transparent,
+    child: Text('火爆专区'),
+  );
+
+  Widget _wrapList() {
+    if (hotGoodsList.length != 0) {
+      List<Widget> listWidget = hotGoodsList.map((value) {
+        return InkWell(
+          onTap: null,
+          child: Container(
+            width: MediaQuery.of(context).size.width / 2 - 10,
+            color: Colors.white,
+            padding: EdgeInsets.all(5),
+            margin: EdgeInsets.only(bottom: 3),
+            child: Column(
+              children: <Widget>[
+                Image.network(
+                  value['image'],
+                  width: MediaQuery.of(context).size.width / 3 - 5,
+                ),
+                Text(
+                  value['name'],
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                      color: Colors.pink,
+                      fontSize: ScreenUtil.instance.setSp(26)),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Text('¥${value['mallPrice']}'),
+                    Text('   '),
+                    Text(
+                      '¥${value['price']}',
+                      style: TextStyle(
+                          color: Colors.black26,
+                          decoration: TextDecoration.lineThrough),
+                    ),
+                  ],
+                )
+              ],
+            ),
+          ),
+        );
+      }).toList();
+      return Wrap(
+        spacing: 2,
+        children: listWidget,
+      );
+    } else {
+      return Text('');
+    }
+  }
+
+  Widget _hotGoods() {
+    return Container(
+      child: Column(
+        children: <Widget>[hotTitle, _wrapList()],
+      ),
     );
   }
 
@@ -356,27 +457,3 @@ class FloorContent extends StatelessWidget {
     );
   }
 }
-
-
-class HotGoods extends StatefulWidget {
-  @override
-  _HotGoodsState createState() => _HotGoodsState();
-}
-
-class _HotGoodsState extends State<HotGoods> {
-
-  @override
-  void initState() {
-    super.initState();
-    request('homePageBelowContent', 1).then((value){
-      print(value);
-    });
-  }
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      child: Text('jspang'),
-    );
-  }
-}
-
