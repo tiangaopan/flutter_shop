@@ -8,7 +8,6 @@ import '../provide/child_category.dart';
 import '../model/categoryGoodsList.dart';
 import '../provide/category_goods_list.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 
 class CategoryPage extends StatefulWidget {
   @override
@@ -277,14 +276,14 @@ class _CategoryGoodsListState extends State<CategoryGoodsList> {
       if (goodsList.data == null) {
         print("没有数据了");
 
-        Fluttertoast.showToast(
-            msg: '已经到底了',
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.CENTER,
-            backgroundColor: Colors.pink,
-            fontSize: 16.0,
-            timeInSecForIos: 1,
-            textColor: Colors.deepPurpleAccent);
+//        Fluttertoast.showToast(
+//            msg: '已经到底了',
+//            toastLength: Toast.LENGTH_SHORT,
+//            gravity: ToastGravity.CENTER,
+//            backgroundColor: Colors.pink,
+//            fontSize: 16.0,
+//            timeInSecForIos: 1,
+//            textColor: Colors.deepPurpleAccent);
         Provide.value<ChildCategory>(context).changeNoMore('没有更多了');
 
       } else {

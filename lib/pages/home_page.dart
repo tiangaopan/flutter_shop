@@ -4,6 +4,7 @@ import 'package:flutter_swiper/flutter_swiper.dart';
 import 'dart:convert';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
+import '../routers/application.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -138,7 +139,10 @@ class _HomePageState extends State<HomePage>
     if (hotGoodsList.length != 0) {
       List<Widget> listWidget = hotGoodsList.map((value) {
         return InkWell(
-          onTap: null,
+          onTap: () {
+            Application.router
+                .navigateTo(context, "/detail?id=${value['goodsId']}");
+          },
           child: Container(
             width: MediaQuery.of(context).size.width / 2 - 10,
             color: Colors.white,
@@ -210,9 +214,14 @@ class SwiperDiy extends StatelessWidget {
       width: ScreenUtil.screenWidth,
       child: Swiper(
         itemBuilder: (BuildContext context, int index) {
-          return Image.network(
-            "${swiperDataList[index]['image']}",
-            fit: BoxFit.cover,
+          return InkWell(
+            onTap: () {
+              Application.router.navigateTo(context, "/detail?id=${swiperDataList[index]['goodsId']}");
+            },
+            child: Image.network(
+              "${swiperDataList[index]['image']}",
+              fit: BoxFit.cover,
+            ),
           );
         },
         itemCount: swiperDataList.length,
@@ -232,7 +241,7 @@ class TopNavigator extends StatelessWidget {
   Widget _gridViewItemUI(BuildContext context, item) {
     return InkWell(
       onTap: () {
-        print("点击了导航");
+
       },
       child: Column(
         children: <Widget>[
@@ -349,9 +358,11 @@ class Recommend extends StatelessWidget {
   }
 
   //商品单独项方法
-  Widget _item(index) {
+  Widget _item(context, index) {
     return InkWell(
-      onTap: null,
+      onTap: (){
+        Application.router.navigateTo(context, "/detail?id=${recommendList[index]['goodsId']}");
+      },
       child: Container(
         height: ScreenUtil.instance.setHeight(460),
         width: ScreenUtil.instance.setWidth(350),
@@ -383,7 +394,7 @@ class Recommend extends StatelessWidget {
           scrollDirection: Axis.horizontal,
           itemCount: recommendList.length,
           itemBuilder: (BuildContext context, int index) {
-            return _item(index);
+            return _item(context, index);
           }),
     );
   }
@@ -450,7 +461,7 @@ class FloorContent extends StatelessWidget {
       width: MediaQuery.of(context).size.width / 2,
       child: InkWell(
         onTap: () {
-          print("点击了楼层商品");
+          Application.router.navigateTo(context, "/detail?id=${goods['goodsId']}");
         },
         child: Image.network(goods['image']),
       ),
