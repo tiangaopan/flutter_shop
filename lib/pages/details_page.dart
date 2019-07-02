@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provide/provide.dart';
 import '../provide/details_info.dart';
+import '../pages/details_page/details_top_area.dart';
+import '../pages/details_page/details_tabbar.dart';
+
 
 class DetailsPage extends StatelessWidget {
   final String goodsId;
@@ -24,7 +27,8 @@ class DetailsPage extends StatelessWidget {
             return Container(
               child: Column(
                 children: <Widget>[
-                  Text(goodsId)
+                  DetailsTopArea(),
+                  DetailsTabbar(),
                 ],
               ),
             );
