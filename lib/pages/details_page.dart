@@ -3,6 +3,8 @@ import 'package:provide/provide.dart';
 import '../provide/details_info.dart';
 import '../pages/details_page/details_top_area.dart';
 import '../pages/details_page/details_tabbar.dart';
+import '../pages/details_page/details_web.dart';
+import '../pages/details_page/details_bottom.dart';
 
 
 class DetailsPage extends StatelessWidget {
@@ -24,18 +26,27 @@ class DetailsPage extends StatelessWidget {
       body: FutureBuilder(
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           if (snapshot.hasData) {
-            return Container(
-              child: Column(
-                children: <Widget>[
-                  DetailsTopArea(),
-                  DetailsTabbar(),
-                ],
-              ),
-            );
+            return SafeArea(child: Stack(
+              children: <Widget>[
+                Container(
+                  child: ListView(
+                    children: <Widget>[
+                      DetailsTopArea(),
+                      DetailsTabbar(),
+                      DetailsWeb(),
+                    ],
+                  ),
+                ),
+
+                Positioned(child: DetailsBottom(), bottom: 0,left: 0,),
+              ],
+            ));
           } else {
             return Text('加载中');
           }
-        }, future:_getBackInfo(context),),
+        },
+        future: _getBackInfo(context),
+      ),
     );
   }
 

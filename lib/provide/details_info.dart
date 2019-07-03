@@ -9,9 +9,9 @@ class DetailsInfoProvide with ChangeNotifier {
   bool isRight = false;
 
   //从后台获取商品数据  ui和业务逻辑分离
-  getGoodsInfo(String id) {
+  getGoodsInfo(String id) async {
     var formData = {'goodId': id};
-    request("getGoodDetailById", formData: formData).then((value) {
+   await request("getGoodDetailById", formData: formData).then((value) {
       goodsInfo = DetailsModel.fromJson(json.decode(value.toString()));
       notifyListeners();
     });
