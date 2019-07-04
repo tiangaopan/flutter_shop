@@ -7,7 +7,7 @@ class CartProvide with ChangeNotifier {
   String cartString = "[]";
   final String CART_KEY = "Cart_KEY";
   List<CartInfoModel> cartInfoList = [];
-  double allPrice = 0;//总价格
+  double allPrice = 0; //总价格
   int allGoodsCount = 0; //商品总数量
   bool isAllCheck = true; //是否全部选中
 
@@ -66,13 +66,12 @@ class CartProvide with ChangeNotifier {
       tempList.forEach((item) {
         var cartInfoModel = CartInfoModel.fromJson(item);
         cartInfoList.add(cartInfoModel);
-        if(cartInfoModel.isCheck){
+        if (cartInfoModel.isCheck) {
           allGoodsCount += cartInfoModel.count;
           allPrice += (cartInfoModel.count * cartInfoModel.price);
-        } else{
+        } else {
           isAllCheck = false;
         }
-
       });
     }
     notifyListeners();
@@ -98,8 +97,7 @@ class CartProvide with ChangeNotifier {
     await getCartInfo();
   }
 
-
-  changeCheckState(CartInfoModel model) async{
+  changeCheckState(CartInfoModel model) async {
     SharedPreferences sp = await SharedPreferences.getInstance();
     cartString = sp.getString(CART_KEY);
     List<Map> tempList = (jsonDecode(cartString) as List).cast();
@@ -113,7 +111,7 @@ class CartProvide with ChangeNotifier {
       tempIndex++;
     });
 
-    tempList[changeIndex]= model.toJson();
+    tempList[changeIndex] = model.toJson();
     cartString = jsonEncode(tempList);
     sp.setString(CART_KEY, cartString);
     await getCartInfo();
@@ -124,7 +122,7 @@ class CartProvide with ChangeNotifier {
     SharedPreferences sp = await SharedPreferences.getInstance();
     cartString = sp.getString(CART_KEY);
     List<Map> tempList = (jsonDecode(cartString) as List).cast();
-    for(int i=0 ; i< tempList.length; i++){
+    for (int i = 0; i < tempList.length; i++) {
       tempList[i]['isCheck'] = val;
     }
     cartString = jsonEncode(tempList);
@@ -132,6 +130,30 @@ class CartProvide with ChangeNotifier {
     await getCartInfo();
   }
 
+  //商品数量加减
+  addOrReduceAction(var cartItem, String todo) async {
+    SharedPreferences sp = await SharedPreferences.getInstance();
+    cartString = sp.getString(CART_KEY);
+    List<Map> tempList = (jsonDecode(cartString) as List).cast();
 
+    int tempIndex = 0;
+    int changeIndex = 0;
+    tempList.forEach((item) {
+      if (item['goodsId'] == cartItem.goodsId) {
+        changeIndex = tempIndex;
+      }
+      tempIndex++;
+    });
 
+    if ("add" == todo) {
+      cartItem.count++;
+    } else if (cartItem.count > 1) {
+      cartItem.count--;
+    }
+    tempList[changeIndex] = cartItem.toJson();
+
+    cartString = jsonEncode(tempList);
+    sp.setString(CART_KEY, cartString);
+    await getCartInfo();
+  }
 }

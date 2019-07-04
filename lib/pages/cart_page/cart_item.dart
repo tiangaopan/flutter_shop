@@ -61,7 +61,7 @@ class CartItem extends StatelessWidget {
       padding: EdgeInsets.all(10),
       alignment: Alignment.topLeft,
       child: Column(
-        children: <Widget>[Text(item.goodsName), CartCount()],
+        children: <Widget>[Text(item.goodsName), CartCount(item)],
       ),
     );
   }

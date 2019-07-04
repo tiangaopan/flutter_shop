@@ -11,16 +11,19 @@ import './routers/application.dart';
 import 'provide/details_info.dart';
 import 'provide/cart.dart';
 import 'dart:io';
+import 'provide/currentIndex.dart';
 void main() {
   var counter = Counter();
   var childCategory = ChildCategory();
   var detailsInfo = DetailsInfoProvide();
   var cartProvide = CartProvide();
+  var currentProvide = CurrentIndexProvide();
   var categoryGoodsListProvider = CategoryGoodsListProvider();
   var providers = Providers();
   providers
     ..provide(Provider<Counter>.value(counter))
     ..provide(Provider<CartProvide>.value(cartProvide))
+    ..provide(Provider<CurrentIndexProvide>.value(currentProvide))
     ..provide(Provider<CategoryGoodsListProvider>.value(categoryGoodsListProvider))
     ..provide(Provider<ChildCategory>.value(childCategory))
     ..provide(Provider<DetailsInfoProvide>.value(detailsInfo));
