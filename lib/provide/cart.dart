@@ -30,7 +30,7 @@ class CartProvide with ChangeNotifier {
         'goodsName': goodsName,
         'count': count,
         'price': price,
-        'image': images
+        'images': images
       };
       tempList.add(newGoods);
       cartInfoList.add(CartInfoModel.fromJson(newGoods));

@@ -1,73 +1,45 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:provide/provide.dart';
+import '../provide/cart.dart';
+import 'cart_page/cart_item.dart';
+import 'cart_page/cart_bottom.dart';
+import 'cart_page/cart_count.dart';
 
-class CartPage extends StatefulWidget {
-  @override
-  _CartPageState createState() => _CartPageState();
-}
 
-class _CartPageState extends State<CartPage> {
-  List<String> testList = [];
-
+class CartPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    _show();  //每次进入前进行显示
-    return Container(
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('购物车'),
+      ),
+      body: FutureBuilder(
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            List castList = Provide
+                .value<CartProvide>(context)
+                .cartInfoList;
 
-        child:Column(
-          children: <Widget>[
-            Container(
-              height: 500.0,
-              child: ListView.builder(
-                itemCount:testList.length ,
-                itemBuilder: (context,index){
-                  return ListTile(
-                    title: Text(testList[index]),
-                  );
-                },
-              ) ,
-            ),
-
-            RaisedButton(
-              onPressed: (){_add();},
-              child: Text('增加'),
-            ),
-            RaisedButton(
-              onPressed: (){_clear();},
-              child: Text('清空'),
-            ),
-          ],
-        )
-
+            return Stack(
+              children: <Widget>[
+                ListView.builder(
+                  itemBuilder: (BuildContext context, int index) {
+                    return CartItem(item: castList[index]);
+                  }, itemCount: castList.length,),
+                Positioned(child: CartBottom(), bottom: 0,left: 0,)
+              ],
+            );
+          } else {
+            return Text('正在加载。。。');
+          }
+        },
+        future: _getCartInfo(context),
+      ),
     );
   }
 
-  //增加方法
-  void _add() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String temp="技术胖是最胖的!";
-    testList.add(temp);
-    prefs.setStringList('testInfo', testList);
-    _show();
-  }
-
-  //查询
-  void _show() async{
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      if(prefs.getStringList('testInfo')!=null){
-        testList=prefs.getStringList('testInfo');
-      }
-    });
-  }
-
-  //删除
-  void _clear() async{
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    //prefs.clear(); //全部清空
-    prefs.remove('testInfo'); //删除key键
-    setState((){
-      testList=[];
-    });
+  Future<String> _getCartInfo(BuildContext context) async {
+    await Provide.value<CartProvide>(context).getCartInfo();
+    return 'end';
   }
 }
