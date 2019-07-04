@@ -5,7 +5,6 @@ import 'cart_page/cart_item.dart';
 import 'cart_page/cart_bottom.dart';
 import 'cart_page/cart_count.dart';
 
-
 class CartPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -16,17 +15,26 @@ class CartPage extends StatelessWidget {
       body: FutureBuilder(
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            List castList = Provide
-                .value<CartProvide>(context)
-                .cartInfoList;
+            List castList = Provide.value<CartProvide>(context).cartInfoList;
 
             return Stack(
               children: <Widget>[
-                ListView.builder(
-                  itemBuilder: (BuildContext context, int index) {
-                    return CartItem(item: castList[index]);
-                  }, itemCount: castList.length,),
-                Positioned(child: CartBottom(), bottom: 0,left: 0,)
+                Provide<CartProvide>(
+                  builder: (context, child, chiildCatgory) {
+                    castList = Provide.value<CartProvide>(context).cartInfoList;
+                    return ListView.builder(
+                      itemBuilder: (BuildContext context, int index) {
+                        return CartItem(item: castList[index]);
+                      },
+                      itemCount: castList.length,
+                    );
+                  },
+                ),
+                Positioned(
+                  child: CartBottom(),
+                  bottom: 0,
+                  left: 0,
+                )
               ],
             );
           } else {

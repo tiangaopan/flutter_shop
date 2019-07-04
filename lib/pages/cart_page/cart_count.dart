@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provide/provide.dart';
 
 class CartCount extends StatelessWidget {
   @override
@@ -49,6 +50,7 @@ class CartCount extends StatelessWidget {
 
   //中间数量显示区域
   Widget _countArea(){
+
     return Container(
       width: ScreenUtil.instance.setWidth(80),
       height: ScreenUtil.instance.setWidth(45),
